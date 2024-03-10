@@ -80,6 +80,7 @@ Yes, one of the key features of Quick Mailer for WooCommerce is its user-friendl
 == Screenshots ==
 
 1. Order Details Page view of Quick Mailer for WooCommerce
+2. Setting Page View
 
 == Changelog ==
 = v1.0.0 =
