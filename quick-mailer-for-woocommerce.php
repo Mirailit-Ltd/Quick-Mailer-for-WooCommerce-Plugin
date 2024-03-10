@@ -87,10 +87,8 @@ use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableControlle
 function mirai_mailer_add_settings_link($links)
 {
     $settings_link = '<a href="admin.php?page=quick-mailer-settings">' . __('Settings', 'mirai-mailer') . '</a>';
-    $docs_link = '<a href="https://aimailer.mirailit.com/docs" target="_blank">' . __('Docs', 'text-domain') . '</a>';
-    $support_link = '<a href="https://aimailer.mirailit.com/support" target="_blank">' . __('Support', 'text-domain') . '</a>';
     $pro_link = '<a style="color:#8e0000;font-weight: bold;" href="https://aimailer.mirailit.com" target="_blank">' . __('Go Pro', 'text-domain') . '</a>';
-    array_push($links, $settings_link, $docs_link, $support_link, $pro_link);
+    array_push($links, $settings_link, $pro_link);
 
     return $links;
 }
