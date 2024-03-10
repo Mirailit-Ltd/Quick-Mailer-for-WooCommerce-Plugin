@@ -104,4 +104,4 @@ Email delivery status tracking, so you can ensure your messages reach their inte
 We're committed to continually improving Quick Mailer for WooCommerce to meet your needs. If you have any feedback or suggestions, please don't hesitate to reach out to us.
 
 Upgrade now to fully realize the power of Quick Mailer for WooCommerce, as AI Mailer for WooCommerce generates emails using AI based on your context.
-<a href = "https://aimailer.mirailit.com/">Visit Here</a>
+<a href="https://aimailer.mirailit.com/" target="_blank"> Visit Here</a>
