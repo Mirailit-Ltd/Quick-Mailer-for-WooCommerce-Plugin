@@ -7,6 +7,7 @@ Requires PHP: 7.0
 Tested up to: 6.4
 Stable tag: 1.0.0
 License: GPL v2
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Quick, Easy Emails to Customers right from Woocommerce Dashboard.
 
