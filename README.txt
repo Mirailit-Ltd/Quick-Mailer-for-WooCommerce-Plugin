@@ -1,32 +1,29 @@
 === Quick Mailer for WooCommerce ===
 Contributors: mirailit
 Donate link: https://aimailer.mirailit.com/
-Tags: woocommerce, email, communication, orders, customer-support
+Tags: woocommerce, email, communication, orders, customer-support, email-customers
 Requires at least: 5.0
 Requires PHP: 7.0
 Tested up to: 6.4
 Stable tag: 1.0.0
 License: GPL v2
 
-Quick, Easy Emails to Customers right from Woocommerce Dashboard. The sent emails are also tracked on the emails sent box.
+Quick, Easy Emails to Customers right from Woocommerce Dashboard.
 
 Plugin Demo
 ![Custom Email Demo](/assets/quick-mailer-for-woocommerce.png)
 
 == Description ==
 
-The Quick Mailer for WooCommerce Plugin is a powerful and user-friendly tool designed to streamline the communication process between your online store's support team or shop managers and your customers. With this plugin, you can efficiently send updates and information directly from the WooCommerce Orders Dashboard, ensuring your customers are always informed and engaged.
+The Quick Mailer for WooCommerce Plugin is a powerful and user-friendly tool designed to streamline the communication process between your online store's support team or shop managers and your customers. With this plugin, you can efficiently send updates and information directly from the WooCommerce Orders Dashboard, ensuring your customers are always informed and engaged. Using template you can save your frequently used emails.
 
-You can click the file name to directly edit it through the theme editor, though we don't recommend this for bigger changes.
 
 == Features ==
 
 - **Email Directly from Orders Dashboard:** Quickly send emails without leaving the WooCommerce Orders Dashboard.
 - **Predefined Templates:** Save time with customizable templates for common updates and inquiries.
 - **Dynamic Placeholders:** Automatically fill in details like order number, customer name, and to email address, along with custom meta fields as required.
-- **Custom Meta Fields Support:** Tailor your emails with additional information unique to your store and customer orders.
 - **Universal Email Provider Compatibility:** Set up with any email provider, ensuring all sent emails are stored in your sent box for easy tracking and follow-up.
-- **Easy Conversation Tracking:** Keep track of customer interactions with ease, as all correspondence is saved in your email provider's sent box.
 
 == Installation ==
 
@@ -90,10 +87,7 @@ Yes, one of the key features of Quick Mailer for WooCommerce is its user-friendl
 - **Email Directly from Orders Dashboard:** Quickly send emails without leaving the WooCommerce Orders Dashboard.
 - **Predefined Templates:** Save time with customizable templates for common updates and inquiries.
 - **Dynamic Placeholders:** Automatically fill in details like order number, customer name, and to email address, along with custom meta fields as required.
-- **Custom Meta Fields Support:** Tailor your emails with additional information unique to your store and customer orders.
 - **Universal Email Provider Compatibility:** Set up with any email provider, ensuring all sent emails are stored in your sent box for easy tracking and follow-up.
-- **Easy Conversation Tracking:** Keep track of customer interactions with ease, as all correspondence is saved in your email provider's sent box.
-
 
 
 == Upgrade Notice ==
