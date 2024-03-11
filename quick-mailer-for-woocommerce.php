@@ -140,7 +140,7 @@ function miraimailer_email_meta_box_callback($post)
 
 
     $options = get_option('mirai_mailer_settings');
-    $email_signature = $options['mirai_mailer_email_signature'];
+    $email_signature = isset($options['mirai_mailer_email_signature']) ? $options['mirai_mailer_email_signature'] : ' ';
 
     // Get Order number , Post Id gives error sometimes
     $order_number = $order->get_order_number();
