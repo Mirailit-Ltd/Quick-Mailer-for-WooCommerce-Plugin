@@ -16,24 +16,14 @@ class EmailTemplates
 
         global $wpdb;
         $table_name = $wpdb->prefix . 'mirai_email_templates';
-        $cache_key = 'template_id_' . $template_name; // Unique cache key based on the template name
 
-        // Attempt to get the template ID from the cache
-        $template_id = wp_cache_get($cache_key);
-
-        // Check if the template ID exists in the cache
-        if ($template_id === false) {
-            // If not found in cache, perform the database query to get the template ID
-            $template_id = $wpdb->get_var(
-                $wpdb->prepare(
-                    "SELECT id FROM $table_name WHERE template_name = %s",
-                    $template_name
-                )
-            );
-
-            // Cache the template ID (or null if not found), set an expiration for the cache (e.g., 86400 seconds for 24 hours)
-            wp_cache_set($cache_key, $template_id, '', 86400);
-        }
+        // Check if the template exists
+        $template_id = $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT id FROM $table_name WHERE template_name = %s",
+                $template_name
+            )
+        );
 
         if ($template_id) {
             // Update the existing template
@@ -77,19 +67,9 @@ class EmailTemplates
     {
         global $wpdb;
         $table_name = $wpdb->prefix . 'mirai_email_templates';
-        $cache_key = 'all_mirai_email_templates'; // Unique cache key for all templates
 
-        // Attempt to get the templates from the cache
-        $templates = wp_cache_get($cache_key);
-
-        // Check if the templates exist in the cache
-        if ($templates === false) {
-            // If not found in cache, perform the database query to get all templates
-            $templates = $wpdb->get_results("SELECT * FROM {$table_name}", OBJECT);
-
-            // Cache the templates, set an expiration for the cache (e.g., 86400 seconds for 24 hours)
-            wp_cache_set($cache_key, $templates, '', 86400);
-        }
+        // Get all templates
+        $templates = $wpdb->get_results("SELECT * FROM {$table_name}", OBJECT);
 
         // Prepare the array
         $preformatted_emails = array();
@@ -107,22 +87,12 @@ class EmailTemplates
     {
         global $wpdb;
         $table_name = $wpdb->prefix . 'mirai_email_templates';
-        $cache_key = 'mirai_email_template_' . $template_id; // Unique cache key for the template
 
-        // Attempt to get the specific template from the cache
-        $template = wp_cache_get($cache_key);
-
-        // Check if the template exists in the cache
-        if ($template === false) {
-            // Directly passing the prepared statement to $wpdb->get_row()
-            $template = $wpdb->get_row($wpdb->prepare(
-                "SELECT template_name, description, subject, body FROM {$table_name} WHERE id = %d",
-                $template_id
-            ));
-
-            // Cache the template, set an expiration for the cache (e.g., 86400 seconds for 24 hours)
-            wp_cache_set($cache_key, $template, '', 86400);
-        }
+        $sql = $wpdb->prepare(
+            "SELECT template_name, description, subject, body FROM {$table_name} WHERE id = %d",
+            $template_id
+        );
+        $template = $wpdb->get_row($sql);
 
         return $template;
     }

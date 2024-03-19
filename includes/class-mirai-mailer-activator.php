@@ -35,22 +35,8 @@ class Mirai_Mailer_Activator
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'mirai_email_templates';
 
-		// Check if the table exists in the cache first
-		$table_exists = wp_cache_get('table_exists_' . $table_name);
-
-		// If it's not in the cache, perform the operation to check table existence
-		if ($table_exists === false) {
-			// Use the SHOW TABLES LIKE query to check for the table's existence
-			$result = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $table_name));
-
-			$table_exists = !empty($result); // If result is not empty, table exists
-
-			// Cache the result using WordPress's wp_cache_set
-			wp_cache_set('table_exists_' . $table_name, $table_exists, '', 86400); // The third parameter is the group, which is left as an empty string for default handling
-		}
-
-		// Check if the table exists
-		if ($table_exists) {
+		// If $table_name exists then we assume the table has already been created
+		if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") == $table_name) {
 			error_log("Table $table_name already exists");
 			return;
 		}

@@ -196,7 +196,7 @@ add_action('admin_init', 'mirai_mailer_settings_init');
 function mirai_mailer_settings_section_cb($args)
 {
     // Section introduction text
-    echo '<p>' . esc_html__('Enter your SMTP details below to configure email sending.', 'mirai-mailer') . '</p>';
+    echo '<p>' . __('Enter your SMTP details below to configure email sending.', 'mirai-mailer') . '</p>';
 }
 
 function mirai_mailer_settings_field_cb($args)

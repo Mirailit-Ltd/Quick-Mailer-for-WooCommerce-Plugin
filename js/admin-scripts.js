@@ -117,7 +117,6 @@ jQuery(document).ready(function ($) {
             url: miraiMailerAjax.ajax_url,
             data: {
                 action: 'get_order_notes',
-                nonce: $('#mirai_mailer_email_nonce').val(),
                 order_id: order_id,
             },
             success: function (response) {
