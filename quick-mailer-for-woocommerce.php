@@ -222,7 +222,7 @@ function miraimailer_email_meta_box_callback($post)
 
                     <div>
                         <p>Status:
-                            <strong><?php echo ucfirst(esc_html($order_status)); ?></strong>
+                            <strong><?php echo esc_html(ucfirst($order_status)); ?></strong>
                         </p>
                     </div>
                 </div>
@@ -251,7 +251,7 @@ function miraimailer_email_meta_box_callback($post)
                     </strong>
                 </p>
 
-                <p>Address:<strong> <?php echo preg_replace('/<br\s?\/?>/', ', ', $address); ?></strong></p>
+                <p>Address:<strong> <?php echo wp_kses_post(preg_replace('/<br\s?\/?>/', ', ', $address)); ?></strong></p>
             </div>
         </div>
     </div>
@@ -277,9 +277,9 @@ function miraimailer_email_meta_box_callback($post)
 
 
     <div class="button-section">
-        <?php echo '<button type="button" id="mirai_mailer_save_email_template" class="save-email-button">' . __('Save Email', 'mirai-mailer') . '</button>'; ?>
+        <?php echo '<button type="button" id="mirai_mailer_save_email_template" class="save-email-button">' . esc_html__('Save Email', 'mirai-mailer') . '</button>'; ?>
         <!-- Send Email Ajax Button -->
-        <?php echo '<button type="button" id="mirai_mailer_send_email" class="send-email-button">' . __('Send Email', 'mirai-mailer') . '</button>'; ?>
+        <?php echo '<button type="button" id="mirai_mailer_send_email" class="send-email-button">' . esc_html__('Send Email', 'mirai-mailer') . '</button>'; ?>
 
     </div>
 
@@ -323,8 +323,8 @@ function miraimailer_email_meta_box_callback($post)
 
             // show_raw_text when is toggled then change preformatted_email_select to empty value
             $('#show_raw_text').change(function() {
-                var emailsData = <?php echo json_encode($preformatted_emails); ?>;
-                var dynamicData = <?php echo json_encode($dynamic_data_placeholder); ?>;
+                var emailsData = <?php echo wp_json_encode($preformatted_emails); ?>;
+                var dynamicData = <?php echo wp_json_encode($dynamic_data_placeholder); ?>;
                 var selectedKey = $('#preformatted_email_select').val();
 
                 if (!emailsData[selectedKey]) {
@@ -333,14 +333,14 @@ function miraimailer_email_meta_box_callback($post)
                 if ($(this).is(':checked')) {
 
                     console.log(emailsData[selectedKey].subject);
-                    $('#<?php echo $custom_email_subject_id; ?>').val(emailsData[selectedKey].subject);
+                    $('#<?php echo esc_attr($custom_email_subject_id); ?>').val(emailsData[selectedKey].subject);
                     tinyMCE.get('custom_email_content_wpeditor').setContent(emailsData[selectedKey].body);
 
                 } else {
 
                     // Replace placeholders in the subject
                     var populatedSubject = replacePlaceholders(emailsData[selectedKey].subject, dynamicData);
-                    $('#<?php echo $custom_email_subject_id; ?>').val(populatedSubject);
+                    $('#<?php echo esc_attr($custom_email_subject_id); ?>').val(populatedSubject);
 
                     // Replace placeholders in the body
                     var populatedBody = replacePlaceholders(emailsData[selectedKey].body, dynamicData);
@@ -361,7 +361,7 @@ function miraimailer_email_meta_box_callback($post)
                         // Also show the label
                         $('label[for="template_name"]').show();
                         $('#template_name').val('');
-                        $('#<?php echo $custom_email_subject_id; ?>').val('');
+                        $('#<?php echo esc_attr($custom_email_subject_id); ?>').val('');
                         tinyMCE.get('custom_email_content_wpeditor').setContent('');
                         return;
                     } else {
@@ -369,9 +369,9 @@ function miraimailer_email_meta_box_callback($post)
                         $('label[for="template_name"]').hide();
 
                         // Dynamic Data to Replace
-                        var dynamicData = <?php echo json_encode($dynamic_data_placeholder); ?>;
+                        var dynamicData = <?php echo wp_json_encode($dynamic_data_placeholder); ?>;
 
-                        var emailsData = <?php echo json_encode($preformatted_emails); ?>;
+                        var emailsData = <?php echo wp_json_encode($preformatted_emails); ?>;
 
                         if (emailsData[selectedKey]) {
 
@@ -379,7 +379,7 @@ function miraimailer_email_meta_box_callback($post)
                             if (!$('#show_raw_text').is(':checked')) {
                                 // Replace placeholders in the subject
                                 var populatedSubject = replacePlaceholders(emailsData[selectedKey].subject, dynamicData);
-                                $('#<?php echo $custom_email_subject_id; ?>').val(populatedSubject);
+                                $('#<?php echo esc_attr($custom_email_subject_id); ?>').val(populatedSubject);
 
                                 // Replace placeholders in the body
                                 var populatedBody = replacePlaceholders(emailsData[selectedKey].body, dynamicData);
@@ -388,7 +388,7 @@ function miraimailer_email_meta_box_callback($post)
                             }
                             // Else show raw texts without replacing placeholder
                             else {
-                                $('#<?php echo $custom_email_subject_id; ?>').val(emailsData[selectedKey].subject);
+                                $('#<?php echo esc_attr($custom_email_subject_id); ?>').val(emailsData[selectedKey].subject);
                                 tinyMCE.get('custom_email_content_wpeditor').setContent(emailsData[selectedKey].body);
                             }
 
@@ -426,8 +426,7 @@ function mirai_mailer_save_email_template()
 {
 
     // Check for nonce security
-    $nonce = $_POST['nonce'];
-    if (!wp_verify_nonce($nonce, 'mirai_mailer_email_nonce')) {
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'mirai_mailer_email_nonce')) {
         wp_send_json_error('Nonce is not valid.');
     }
 
@@ -475,8 +474,7 @@ function send_custom_email()
 {
 
     // Check for nonce security
-    $nonce = $_POST['nonce'];
-    if (!wp_verify_nonce($nonce, 'mirai_mailer_email_nonce')) {
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'mirai_mailer_email_nonce')) {
         wp_send_json_error('Nonce is not valid.');
     }
 
@@ -528,11 +526,12 @@ function send_custom_email()
         // Get Order and add note 
         $order = wc_get_order($order_id);
         $order->add_order_note(
-            sprintf(
-                __('Email sent to: %s <br> Subject: %s', 'woocommerce'),
-                $recipient,
-                $subject
-            ),
+            wp_kses_post(sprintf(
+                // Translators: %1$s: Recipient email, %2$s: Email subject
+                __('Email sent to: %1$s <br> Subject: %2$s', 'woocommerce'),
+                esc_html($recipient),
+                esc_html($subject)
+            )),
             false, // Is Customer Note (Show the Email Note Customer Also)
             true // Add Username for Admin Log
         );
@@ -596,7 +595,11 @@ function send_email_via_gmail_smtp($to, $subject, $message, $headers = '', $atta
 //====== Get and Update Order Notes Via AJAX ======
 function handle_get_order_notes()
 {
-    $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'mirai_mailer_email_nonce')) {
+        wp_send_json_error('Nonce is not valid.');
+    } else {
+        $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+    }
 
     if ($order_id) {
         $order = wc_get_order($order_id);
@@ -609,7 +612,7 @@ function handle_get_order_notes()
                 // Construct each note as WooCommerce does in the admin panel
                 echo '<li rel="' . esc_attr($note->id) . '" class="note ' . ($note->customer_note ? 'customer-note' : '') . '">';
                 echo '<div class="note_content">';
-                echo '<p>' . $note->content . '</p>';
+                echo '<p>' . esc_html($note->content) . '</p>';
                 echo '</div>';
                 echo '<p class="meta">';
                 echo '<abbr class="exact-date" title="' . esc_attr($note->date_created->date('Y-m-d H:i:s')) . '">' . esc_html($note->date_created->date_i18n('F j, Y, g:i a')) . '</abbr>';
