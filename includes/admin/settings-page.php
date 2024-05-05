@@ -203,8 +203,8 @@ function mirai_mailer_settings_field_cb($args)
 {
     // Output the HTML for the input field
     $options = get_option('mirai_mailer_settings');
-    $value = $options[$args['label_for']] ?? '';
-    echo '<input type="text" id="' . esc_attr($args['label_for']) . '" name="mirai_mailer_settings[' . esc_attr($args['label_for']) . ']" value="' . esc_attr($value) . '">';
+    $value = isset($options[$args['label_for']]) ? esc_attr($options[$args['label_for']]) : '';
+    echo '<input type="text" id="' . esc_attr($args['label_for']) . '" name="mirai_mailer_settings[' . esc_attr($args['label_for']) . ']" value="' . $value . '">';
 }
 
 // Password field callback function
@@ -212,20 +212,15 @@ function mirai_mailer_settings_field_password($args)
 {
     // Retrieve the value from the options
     $options = get_option('mirai_mailer_settings');
-    $value = $options[$args['label_for']] ?? '';
-
-    // Output the HTML for the password input field
-    echo '<input type="password" id="' . esc_attr($args['label_for']) . '" name="mirai_mailer_settings[' . esc_attr($args['label_for']) . ']" value="' . esc_attr($value) . '">';
-
-    // Add an eye icon for toggling the password visibility
+    $value = isset($options[$args['label_for']]) ? esc_attr($options[$args['label_for']]) : '';
+    echo '<input type="password" id="' . esc_attr($args['label_for']) . '" name="mirai_mailer_settings[' . esc_attr($args['label_for']) . ']" value="' . $value . '">';
     echo '<span id="togglePassword" style="cursor:pointer;">👁️</span>';
 
     // Include JavaScript to toggle password visibility
 ?>
     <script>
         document.getElementById('togglePassword').addEventListener('click', function(e) {
-            // Toggle the type attribute of the password field between 'text' and 'password'
-            var passwordInput = document.getElementById('<?php echo esc_attr($args['label_for']); ?>');
+            var passwordInput = document.getElementById('<?php echo esc_js($args['label_for']); ?>');
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
             } else {
@@ -243,13 +238,11 @@ function custom_plugin_smtp_field_callback($args)
     // Get the value of the setting we've registered with register_setting()
     $options = get_option('mirai_mailer_settings');
     $value = $options[$args['label_for']] ?? '';
-    // Output the field
 ?>
     <input type="checkbox" id="<?php echo esc_attr($args['label_for']); ?>" name="mirai_mailer_settings[<?php echo esc_attr($args['label_for']); ?>]" value="1" <?php checked(1, $value); ?>>
     <label for="<?php echo esc_attr($args['label_for']); ?>"><?php esc_html_e('Yes', 'mirai-mailer'); ?></label>
 <?php
 }
-
 
 // Field callback function
 function mirai_mailer_email_signature_callback($args)
@@ -257,8 +250,7 @@ function mirai_mailer_email_signature_callback($args)
     // Get the value of the setting we've registered with register_setting()
     $options = get_option('mirai_mailer_settings');
     $value = $options[$args['label_for']] ?? '';
-    // Output the field
 ?>
-    <textarea id="<?php echo esc_attr($args['label_for']); ?>" name="mirai_mailer_settings[<?php echo esc_attr($args['label_for']); ?>]" rows="5" cols="50"><?php echo esc_html($value); ?></textarea>
+    <textarea id="<?php echo esc_attr($args['label_for']); ?>" name="mirai_mailer_settings[<?php echo esc_attr($args['label_for']); ?>]" rows="5" cols="50"><?php echo esc_textarea($value); ?></textarea>
 <?php
 }

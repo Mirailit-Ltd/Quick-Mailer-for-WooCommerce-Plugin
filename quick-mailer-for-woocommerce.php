@@ -6,7 +6,7 @@ Description: Quick, Easy Emails to Customers right from WooCommerce Dashboard. T
 Version: 1.0.0
 Author: Mirailit Limited
 Author URI: https://mirailit.com/
-License: GPL v2
+License: GPLv2 or later
 Requires PHP: 5.3
 
 Quick Mailer for WooCommerce
@@ -426,16 +426,14 @@ function mirai_mailer_save_email_template()
 {
 
     // Check for nonce security
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'mirai_mailer_email_nonce')) {
+    if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mirai_mailer_email_nonce')) {
         wp_send_json_error('Nonce is not valid.');
     }
 
-
-
     // Get the email content
-    $content = wpautop($_POST['custom_email_content_wpeditor']);
-    $subject = $_POST['custom_email_subject'];
-    $key = $_POST['key'];
+    $content = wpautop(wp_unslash($_POST['custom_email_content_wpeditor']));
+    $subject = sanitize_text_field(wp_unslash($_POST['custom_email_subject']));
+    $key = sanitize_text_field(wp_unslash($_POST['key']));
 
 
     // If any field is empty send error and which field is empty using switch case statement
@@ -474,17 +472,15 @@ function send_custom_email()
 {
 
     // Check for nonce security
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'mirai_mailer_email_nonce')) {
+    if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mirai_mailer_email_nonce')) {
         wp_send_json_error('Nonce is not valid.');
     }
 
-    $order_id = $_POST['post_ID'];
-    $message = wpautop($_POST['custom_email_content_wpeditor']);
+    $order_id = isset($_POST['post_ID']) ? absint($_POST['post_ID']) : 0;
+    $message = isset($_POST['custom_email_content_wpeditor']) ? wp_kses_post(wp_unslash($_POST['custom_email_content_wpeditor'])) : '';
+    $subject = isset($_POST['custom_email_subject']) ? sanitize_text_field(wp_unslash($_POST['custom_email_subject'])) : '';
 
-
-    $subject = $_POST['custom_email_subject'];
-
-    $recipient = $_POST['customer_email'];
+    $recipient = sanitize_email(wp_unslash($_POST['customer_email']));
 
     // If any field is empty send error and which field is empty using switch case statement
     if (empty($message) || empty($subject) || empty($recipient) || empty($order_id)) {
@@ -595,7 +591,7 @@ function send_email_via_gmail_smtp($to, $subject, $message, $headers = '', $atta
 //====== Get and Update Order Notes Via AJAX ======
 function handle_get_order_notes()
 {
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'mirai_mailer_email_nonce')) {
+    if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mirai_mailer_email_nonce')) {
         wp_send_json_error('Nonce is not valid.');
     } else {
         $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;

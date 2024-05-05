@@ -1,18 +1,16 @@
 === Quick Mailer for WooCommerce ===
 Contributors: mirailit
 Donate link: https://aimailer.mirailit.com/
-Tags: woocommerce, email, communication, orders, customer-support, email-customers
+Tags: woocommerce, email, communication, orders, customer-support
 Requires at least: 5.0
 Requires PHP: 7.0
 Tested up to: 6.4
 Stable tag: 1.0.0
-License: GPL v2
+License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Quick, Easy Emails to Customers right from Woocommerce Dashboard.
 
-Plugin Demo
-![Custom Email Demo](/assets/quick-mailer-for-woocommerce.png)
 
 == Description ==
 

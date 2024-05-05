@@ -10,9 +10,11 @@ class EmailTemplates
     // Save Email template to Database
     public function mirai_mailer_save_template($template_name, $description, $subject, $body)
     {
-        $subject = stripslashes_deep($subject);
-        $body = stripslashes_deep($body);
-        $description = stripslashes_deep($description);
+        $template_name = sanitize_text_field($template_name);
+        $description = sanitize_text_field($description);
+        $subject = sanitize_text_field($subject);
+
+        $body = wp_kses_post($body);
 
         global $wpdb;
         $table_name = $wpdb->prefix . 'mirai_email_templates';
