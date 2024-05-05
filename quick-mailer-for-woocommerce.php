@@ -24,6 +24,12 @@ GNU General Public License for more details.
 */
 
 
+// Exit if accessed directly
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+
 // define plugin version, url, paths
 define('MIRAI_MAILER_VERSION', '1.0.0');
 define('MIRAI_MAILER_PATH', plugin_dir_path(__FILE__));
