@@ -5,21 +5,21 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-function mirai_mailer_create_settings_menu()
+function qmfw_create_settings_menu()
 {
     add_menu_page(
         __('Quick Mailer Settings', 'mirai-mailer'),
         'Quick Mailer',
         'manage_options',
         'quick-mailer-settings',
-        'mirai_mailer_settings_page_content',
+        'qmfw_mirai_mailer_settings_page_content',
         'dashicons-email-alt',
         6
     );
 }
-add_action('admin_menu', 'mirai_mailer_create_settings_menu');
+add_action('admin_menu', 'qmfw_create_settings_menu');
 
-function mirai_mailer_settings_page_content()
+function qmfw_mirai_mailer_settings_page_content()
 {
     // Check user capabilities
     if (!current_user_can('manage_options')) {
@@ -50,26 +50,26 @@ function mirai_mailer_settings_page_content()
 }
 
 
-function mirai_mailer_settings_init()
+function qmfw_mirai_mailer_settings_init()
 {
     // Register settings
-    register_setting('mirai_mailer', 'mirai_mailer_settings');
+    register_setting('mirai_mailer', 'qmfw_mirai_mailer_settings');
 
 
     // Add Setting section and field With checkbox to send email using Custom PLugin SMTP or other plugin email settings
     add_settings_section(
-        'mirai_mailer_settings_section',
+        'qmfw_mirai_mailer_settings_section',
         __('Send Email Using Custom SMTP or Use Other Email privder', 'mirai-mailer'),
-        'mirai_mailer_settings_section_cb',
+        'qmfw_mirai_mailer_settings_section_cb',
         'mirai_mailer'
     );
 
     add_settings_field(
         'mirai_mailer_send_email_using',
         __('Use this Custom SMTP?', 'mirai-mailer'),
-        'custom_plugin_smtp_field_callback',
+        'qmfw_plugin_smtp_field_callback',
         'mirai_mailer',
-        'mirai_mailer_settings_section',
+        'qmfw_mirai_mailer_settings_section',
         [
             'label_for' => 'mirai_mailer_send_email_using',
             'class' => 'mirai_mailer_row',
@@ -79,9 +79,9 @@ function mirai_mailer_settings_init()
 
     // Add settings section
     add_settings_section(
-        'mirai_mailer_settings_section',
+        'qmfw_mirai_mailer_settings_section',
         __('Your SMTP Settings', 'mirai-mailer'),
-        'mirai_mailer_settings_section_cb',
+        'qmfw_mirai_mailer_settings_section_cb',
         'mirai_mailer'
     );
 
@@ -89,9 +89,9 @@ function mirai_mailer_settings_init()
     add_settings_field(
         'mirai_mailer_smtp_host',
         __('SMTP Host', 'mirai-mailer'),
-        'mirai_mailer_settings_field_cb',
+        'qmfw_mirai_mailer_settings_field_cb',
         'mirai_mailer',
-        'mirai_mailer_settings_section',
+        'qmfw_mirai_mailer_settings_section',
         [
             'label_for' => 'mirai_mailer_smtp_host',
             'class' => 'mirai_mailer_row',
@@ -103,9 +103,9 @@ function mirai_mailer_settings_init()
     add_settings_field(
         'mirai_mailer_smtp_username',
         __('SMTP Username', 'mirai-mailer'),
-        'mirai_mailer_settings_field_cb',
+        'qmfw_mirai_mailer_settings_field_cb',
         'mirai_mailer',
-        'mirai_mailer_settings_section',
+        'qmfw_mirai_mailer_settings_section',
         [
             'label_for' => 'mirai_mailer_smtp_username',
             'class' => 'mirai_mailer_row',
@@ -117,9 +117,9 @@ function mirai_mailer_settings_init()
     add_settings_field(
         'mirai_mailer_smtp_password',
         __('SMTP Password', 'mirai-mailer'),
-        'mirai_mailer_settings_field_password',
+        'qmfw_mirai_mailer_settings_field_password',
         'mirai_mailer',
-        'mirai_mailer_settings_section',
+        'qmfw_mirai_mailer_settings_section',
         [
             'label_for' => 'mirai_mailer_smtp_password',
             'class' => 'mirai_mailer_row',
@@ -131,9 +131,9 @@ function mirai_mailer_settings_init()
     add_settings_field(
         'mirai_mailer_smtp_port',
         __('SMTP Port', 'mirai-mailer'),
-        'mirai_mailer_settings_field_cb',
+        'qmfw_mirai_mailer_settings_field_cb',
         'mirai_mailer',
-        'mirai_mailer_settings_section',
+        'qmfw_mirai_mailer_settings_section',
         [
             'label_for' => 'mirai_mailer_smtp_port',
             'class' => 'mirai_mailer_row',
@@ -143,9 +143,9 @@ function mirai_mailer_settings_init()
 
     // Add settings section
     add_settings_section(
-        'mirai_mailer_settings_section',
+        'qmfw_mirai_mailer_settings_section',
         __('Your SMTP Settings', 'mirai-mailer'),
-        'mirai_mailer_settings_section_cb',
+        'qmfw_mirai_mailer_settings_section_cb',
         'mirai_mailer'
     );
 
@@ -153,9 +153,9 @@ function mirai_mailer_settings_init()
     add_settings_field(
         'mirai_mailer_email_from_name',
         __('Email From Name', 'mirai-mailer'),
-        'mirai_mailer_settings_field_cb',
+        'qmfw_mirai_mailer_settings_field_cb',
         'mirai_mailer',
-        'mirai_mailer_settings_section',
+        'qmfw_mirai_mailer_settings_section',
         [
             'label_for' => 'mirai_mailer_email_from_name',
             'class' => 'mirai_mailer_row',
@@ -167,9 +167,9 @@ function mirai_mailer_settings_init()
     add_settings_field(
         'mirai_mailer_email_from_address',
         __('Email From Address', 'mirai-mailer'),
-        'mirai_mailer_settings_field_cb',
+        'qmfw_mirai_mailer_settings_field_cb',
         'mirai_mailer',
-        'mirai_mailer_settings_section',
+        'qmfw_mirai_mailer_settings_section',
         [
             'label_for' => 'mirai_mailer_email_from_address',
             'class' => 'mirai_mailer_row',
@@ -180,9 +180,9 @@ function mirai_mailer_settings_init()
     add_settings_field(
         'mirai_mailer_email_signature',
         __('Email Signature', 'mirai-mailer'),
-        'mirai_mailer_email_signature_callback',
+        'qmfw_email_signature_callback',
         'mirai_mailer',
-        'mirai_mailer_settings_section',
+        'qmfw_mirai_mailer_settings_section',
         [
             'label_for' => 'mirai_mailer_email_signature',
             'class' => 'mirai_mailer_row',
@@ -191,29 +191,29 @@ function mirai_mailer_settings_init()
     );
 }
 
-add_action('admin_init', 'mirai_mailer_settings_init');
+add_action('admin_init', 'qmfw_mirai_mailer_settings_init');
 
-function mirai_mailer_settings_section_cb($args)
+function qmfw_mirai_mailer_settings_section_cb($args)
 {
     // Section introduction text
     echo '<p>' . esc_html__('Enter your SMTP details below to configure email sending.', 'mirai-mailer') . '</p>';
 }
 
-function mirai_mailer_settings_field_cb($args)
+function qmfw_mirai_mailer_settings_field_cb($args)
 {
     // Output the HTML for the input field
-    $options = get_option('mirai_mailer_settings');
+    $options = get_option('qmfw_mirai_mailer_settings');
     $value = isset($options[$args['label_for']]) ? esc_attr($options[$args['label_for']]) : '';
-    echo '<input type="text" id="' . esc_attr($args['label_for']) . '" name="mirai_mailer_settings[' . esc_attr($args['label_for']) . ']" value="' . $value . '">';
+    echo '<input type="text" id="' . esc_attr($args['label_for']) . '" name="qmfw_mirai_mailer_settings[' . esc_attr($args['label_for']) . ']" value="' . $value . '">';
 }
 
 // Password field callback function
-function mirai_mailer_settings_field_password($args)
+function qmfw_mirai_mailer_settings_field_password($args)
 {
     // Retrieve the value from the options
-    $options = get_option('mirai_mailer_settings');
+    $options = get_option('qmfw_mirai_mailer_settings');
     $value = isset($options[$args['label_for']]) ? esc_attr($options[$args['label_for']]) : '';
-    echo '<input type="password" id="' . esc_attr($args['label_for']) . '" name="mirai_mailer_settings[' . esc_attr($args['label_for']) . ']" value="' . $value . '">';
+    echo '<input type="password" id="' . esc_attr($args['label_for']) . '" name="qmfw_mirai_mailer_settings[' . esc_attr($args['label_for']) . ']" value="' . $value . '">';
     echo '<span id="togglePassword" style="cursor:pointer;">👁️</span>';
 
     // Include JavaScript to toggle password visibility
@@ -233,24 +233,24 @@ function mirai_mailer_settings_field_password($args)
 
 
 // Callback function for the Checkbox field
-function custom_plugin_smtp_field_callback($args)
+function qmfw_plugin_smtp_field_callback($args)
 {
     // Get the value of the setting we've registered with register_setting()
-    $options = get_option('mirai_mailer_settings');
+    $options = get_option('qmfw_mirai_mailer_settings');
     $value = $options[$args['label_for']] ?? '';
 ?>
-    <input type="checkbox" id="<?php echo esc_attr($args['label_for']); ?>" name="mirai_mailer_settings[<?php echo esc_attr($args['label_for']); ?>]" value="1" <?php checked(1, $value); ?>>
+    <input type="checkbox" id="<?php echo esc_attr($args['label_for']); ?>" name="qmfw_mirai_mailer_settings[<?php echo esc_attr($args['label_for']); ?>]" value="1" <?php checked(1, $value); ?>>
     <label for="<?php echo esc_attr($args['label_for']); ?>"><?php esc_html_e('Yes', 'mirai-mailer'); ?></label>
 <?php
 }
 
 // Field callback function
-function mirai_mailer_email_signature_callback($args)
+function qmfw_email_signature_callback($args)
 {
     // Get the value of the setting we've registered with register_setting()
-    $options = get_option('mirai_mailer_settings');
+    $options = get_option('qmfw_mirai_mailer_settings');
     $value = $options[$args['label_for']] ?? '';
 ?>
-    <textarea id="<?php echo esc_attr($args['label_for']); ?>" name="mirai_mailer_settings[<?php echo esc_attr($args['label_for']); ?>]" rows="5" cols="50"><?php echo esc_textarea($value); ?></textarea>
+    <textarea id="<?php echo esc_attr($args['label_for']); ?>" name="qmfw_mirai_mailer_settings[<?php echo esc_attr($args['label_for']); ?>]" rows="5" cols="50"><?php echo esc_textarea($value); ?></textarea>
 <?php
 }

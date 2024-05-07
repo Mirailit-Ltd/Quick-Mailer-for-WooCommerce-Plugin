@@ -14,7 +14,7 @@ jQuery(document).ready(function ($) {
 
         var emailData = {
            
-            'action': 'send_custom_email', // This is the name of the WP AJAX action 
+            'action': 'qmfw_send_custom_email', // This is the name of the WP AJAX action 
             'nonce': $('#mirai_mailer_email_nonce').val(),
 
             'post_ID': order_id,
@@ -79,7 +79,7 @@ jQuery(document).ready(function ($) {
 
         var emailData = {
             //PHP hook for action save_email_template -> add_action('wp_ajax_save_email_template', 'save_email_template');
-            'action': 'save_email_template', // This is the name of the WP AJAX action 
+            'action': 'qmfw_save_email_template', // This is the name of the WP AJAX action 
             'nonce': $('#mirai_mailer_email_nonce').val(),
             'key': $key,
             'custom_email_subject': $('#custom_email_subject').val(),
@@ -116,7 +116,7 @@ jQuery(document).ready(function ($) {
             type: "POST",
             url: miraiMailerAjax.ajax_url,
             data: {
-                action: 'get_order_notes',
+                action: 'qmfw_handle_get_order_notes',
                 nonce: $('#mirai_mailer_email_nonce').val(),
                 order_id: order_id,
             },

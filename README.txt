@@ -5,7 +5,7 @@ Tags: woocommerce, email, communication, orders, customer-support
 Requires at least: 5.0
 Requires PHP: 7.0
 Tested up to: 6.4
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,7 +79,17 @@ Yes, one of the key features of Quick Mailer for WooCommerce is its user-friendl
 2. Setting Page View
 
 == Changelog ==
+
+= v1.0.1 =
+
+* Fix - ## Data Must be Sanitized, Escaped, and Validated
+* Fix - ## Generic function/class/define/namespace/option names
+* Fix - ## Allowing Direct File Access to plugin files
+
 = v1.0.0 =
+
+Original version of the Quick Mailer for Woocommerce, not a released version of the plugin, this changelog is here for historical purposes only.
+
 
 == Initial Release ==
 

@@ -25,7 +25,7 @@ if (!defined('ABSPATH')) {
  * @subpackage Mirai_Mailer/includes
  * @author     Mirailit Ltd <mirailit@mirailit.com>
  */
-class Mirai_Mailer_Activator
+class QMFW_Mailer_Activator
 {
 
 	/**

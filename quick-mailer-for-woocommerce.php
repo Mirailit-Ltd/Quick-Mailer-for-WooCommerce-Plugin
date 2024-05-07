@@ -3,7 +3,7 @@
 Plugin Name: Quick Mailer for WooCommerce
 Plugin URI: https://aimailer.mirailit.com/
 Description: Quick, Easy Emails to Customers right from WooCommerce Dashboard. This Plugin is a powerful and user-friendly tool designed to streamline the communication process between your online store's support team or shop managers and your customers.
-Version: 1.0.0
+Version: 1.0.1
 Author: Mirailit Limited
 Author URI: https://mirailit.com/
 License: GPLv2 or later
@@ -31,44 +31,32 @@ if (!defined('ABSPATH')) {
 
 
 // define plugin version, url, paths
-define('MIRAI_MAILER_VERSION', '1.0.0');
-define('MIRAI_MAILER_PATH', plugin_dir_path(__FILE__));
-define('MIRAI_MAILER_URL', plugin_dir_url(__FILE__));
+define('QMFW_MAILER_VERSION', '1.0.1');
+define('QMFW_MAILER_PATH', plugin_dir_path(__FILE__));
+define('QMFW_MAILER_URL', plugin_dir_url(__FILE__));
 
 // include admin settings page
-require_once MIRAI_MAILER_PATH . 'includes/admin/settings-page.php';
+require_once QMFW_MAILER_PATH . 'includes/admin/settings-page.php';
 
 /**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-mirai-mailer-activator.php
  */
-function activate_mirai_mailer()
+function qmfw_activate_mailer()
 {
     require_once plugin_dir_path(__FILE__) . 'includes/class-mirai-mailer-activator.php';
-    Mirai_Mailer_Activator::activate();
+    QMFW_Mailer_Activator::activate();
 }
 
-register_activation_hook(__FILE__, 'activate_mirai_mailer');
+register_activation_hook(__FILE__, 'qmfw_activate_mailer');
 
 
-function custom_email_add_scripts()
+function qmfw_email_add_scripts()
 {
-    wp_enqueue_style('custom-email-style', plugin_dir_url(__FILE__) . 'css/email-template.css', array(), MIRAI_MAILER_VERSION, 'all');
-
-    // AI Ajax
-    wp_enqueue_script('ai_custom_script', plugin_dir_url(__FILE__) . 'js/ai-script.js', array('jquery'), MIRAI_MAILER_VERSION, true);
-    global $post;
-    wp_localize_script(
-        'ai_custom_script',
-        'myScriptData',
-        array(
-            'ajaxurl' => admin_url('admin-ajax.php'),
-            'order_id' => $post ? $post->ID : null,
-        )
-    );
+    wp_enqueue_style('custom-email-style', plugin_dir_url(__FILE__) . 'css/email-template.css', array(), QMFW_MAILER_VERSION, 'all');
 
     // Send Email Ajax and Localize
-    wp_enqueue_script('mirai-mailer-js', MIRAI_MAILER_URL . 'js/admin-scripts.js', array('jquery'), MIRAI_MAILER_VERSION, true);
+    wp_enqueue_script('mirai-mailer-js', QMFW_MAILER_URL . 'js/admin-scripts.js', array('jquery'), QMFW_MAILER_VERSION, true);
     global $post;
     wp_localize_script(
         'mirai-mailer-js',
@@ -80,7 +68,7 @@ function custom_email_add_scripts()
         )
     );
 }
-add_action('admin_enqueue_scripts', 'custom_email_add_scripts');
+add_action('admin_enqueue_scripts', 'qmfw_email_add_scripts');
 
 //  Require Email Templates
 require_once plugin_dir_path(__FILE__) . 'email-templates/emails.php';
@@ -90,7 +78,7 @@ use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableControlle
 
 
 // Add settings links to plugin activate list
-function mirai_mailer_add_settings_link($links)
+function qmfw_add_settings_link($links)
 {
     $settings_link = '<a href="admin.php?page=quick-mailer-settings">' . __('Settings', 'mirai-mailer') . '</a>';
     $pro_link = '<a style="color:#8e0000;font-weight: bold;" href="https://aimailer.mirailit.com" target="_blank">' . __('Go Pro', 'text-domain') . '</a>';
@@ -99,11 +87,11 @@ function mirai_mailer_add_settings_link($links)
     return $links;
 }
 $plugin = plugin_basename(__FILE__);
-add_filter("plugin_action_links_$plugin", 'mirai_mailer_add_settings_link');
+add_filter("plugin_action_links_$plugin", 'qmfw_add_settings_link');
 
 
 // Add custom email meta box
-function miraimailer_email_meta_box_callback($post)
+function qmfw_email_meta_box_callback($post)
 {
 
     // Get the order ID
@@ -116,7 +104,7 @@ function miraimailer_email_meta_box_callback($post)
     global $correct_address_text;
 
     //  Construct Email Templates
-    $templates = new EmailTemplates();
+    $templates = new QMFWEmailTemplates();
 
     // Pull these from the database or the context in which the shortcode is used.
     $content = '';
@@ -135,17 +123,17 @@ function miraimailer_email_meta_box_callback($post)
         $delivery_date = $order_delivery_date . ' (' . $order_delivery_timeslot . ')';
     }
 
-    $total_weight = $templates->get_remaining_weight($order)['items_weight'] . ' kg';
-    $available_weight = $templates->get_remaining_weight($order)['remaining_weight'] . ' kg';
+    $total_weight = $templates->qmfw_get_remaining_weight($order)['items_weight'] . ' kg';
+    $available_weight = $templates->qmfw_get_remaining_weight($order)['remaining_weight'] . ' kg';
 
     $address = $order->get_formatted_billing_address();
 
     // TODO: Check if working
-    $duplicate_orders = $templates->get_duplicate_order_numbers($order);
+    $duplicate_orders = $templates->qmfw_get_duplicate_order_numbers($order);
     $duplicate_order_numbers = implode(', ', $duplicate_orders);
 
 
-    $options = get_option('mirai_mailer_settings');
+    $options = get_option('qmfw_mirai_mailer_settings');
     $email_signature = isset($options['mirai_mailer_email_signature']) ? $options['mirai_mailer_email_signature'] : ' ';
 
     // Get Order number , Post Id gives error sometimes
@@ -165,7 +153,7 @@ function miraimailer_email_meta_box_callback($post)
     );
 
     // Get and display all templates
-    $saved_templates = $templates->mirai_mailer_get_all_templates();
+    $saved_templates = $templates->qmfw_get_all_templates();
     $preformatted_emails = $saved_templates;
 
     // Nonce field for security
@@ -291,7 +279,7 @@ function miraimailer_email_meta_box_callback($post)
 
     <!-- A section showing if using default mailer or Plugin SMPTP Mailer -->
     <?php
-    $custom_or_default_mailer = check_email_serv_is_set();
+    $custom_or_default_mailer = qmfw_check_email_serv_is_set();
     if ($custom_or_default_mailer) {
         echo '<p class="mailer-status">Email Will be Sent Using Quick Mailer Custom SMTP</p>';
     } else {
@@ -410,7 +398,7 @@ function miraimailer_email_meta_box_callback($post)
 }
 
 // ======= Admin Meta Box for Custom Email =======
-function miraimailer_email_meta_box()
+function qmfw_email_meta_box()
 {
     // Get Shop Order Screen Name
     $screen = wc_get_container()->get(CustomOrdersTableController::class)->custom_orders_table_usage_is_enabled() ? wc_get_page_screen_id('shop-order') : 'shop_order';
@@ -418,17 +406,17 @@ function miraimailer_email_meta_box()
     add_meta_box(
         'custom_email_meta_box_id',
         'Quick Mailer for WooCommerce',
-        'miraimailer_email_meta_box_callback',
+        'qmfw_email_meta_box_callback',
         $screen, //'shop_order' or 'shop-order'
         'normal',
         'default'
     );
 }
-add_action('add_meta_boxes', 'miraimailer_email_meta_box');
+add_action('add_meta_boxes', 'qmfw_email_meta_box');
 // ========= End Admin Meta Box for Custom Email =========
 
 // ========= Save Email Template Ajax Post Reciever and Sender =========
-function mirai_mailer_save_email_template()
+function qmfw_save_email_template()
 {
 
     // Check for nonce security
@@ -459,22 +447,22 @@ function mirai_mailer_save_email_template()
     }
 
 
-    $email_obj = new EmailTemplates();
+    $email_obj = new QMFWEmailTemplates();
 
     try {
-        $email_obj->mirai_mailer_save_template($key, $key, $subject, $content);
+        $email_obj->qmfw_save_template($key, $key, $subject, $content);
         wp_send_json_success('Email Template has been saved successfully');
     } catch (Exception $e) {
         wp_send_json_error($e->getMessage());
     }
 }
-add_action('wp_ajax_save_email_template', 'mirai_mailer_save_email_template');
+add_action('wp_ajax_qmfw_save_email_template', 'qmfw_save_email_template');
 
 
 
 
 //=========  Send Email Ajax Post Reciever and Sender =========
-function send_custom_email()
+function qmfw_send_custom_email()
 {
 
     // Check for nonce security
@@ -514,11 +502,11 @@ function send_custom_email()
 
     // ================= Send email with email service or custom SMTP ==================
 
-    $custom_or_default_mailer = check_email_serv_is_set(); // Returns true if Using AI Mailer Custom SMTP
+    $custom_or_default_mailer = qmfw_check_email_serv_is_set(); // Returns true if Using AI Mailer Custom SMTP
 
 
     if ($custom_or_default_mailer) {
-        $email_sent = send_email_via_gmail_smtp($recipient, $subject, $message, $headers);
+        $email_sent = qmfw_send_email_via_gmail_smtp($recipient, $subject, $message, $headers);
     } else {
         $email_sent = wp_mail($recipient, $subject, $message, $headers);
     }
@@ -530,7 +518,7 @@ function send_custom_email()
         $order->add_order_note(
             wp_kses_post(sprintf(
                 // Translators: %1$s: Recipient email, %2$s: Email subject
-                __('Email sent to: %1$s <br> Subject: %2$s', 'woocommerce'),
+                __('Email sent to: %1$s, Subject: %2$s', 'woocommerce'),
                 esc_html($recipient),
                 esc_html($subject)
             )),
@@ -547,11 +535,11 @@ function send_custom_email()
         wp_send_json_error('Email failed to send to ' . $recipient . ' Please check your SMTP settings');
     }
 }
-add_action('wp_ajax_send_custom_email', 'send_custom_email');
+add_action('wp_ajax_qmfw_send_custom_email', 'qmfw_send_custom_email');
 
 
 // Send Email Via Custom GMAIL SMTP setting setup with Plugin settings
-function send_email_via_gmail_smtp($to, $subject, $message, $headers = '', $attachments = array())
+function qmfw_send_email_via_gmail_smtp($to, $subject, $message, $headers = '', $attachments = array())
 {
     // Include PHPMailer class if not autoloaded
     if (!class_exists('PHPMailer\PHPMailer\PHPMailer')) {
@@ -565,7 +553,7 @@ function send_email_via_gmail_smtp($to, $subject, $message, $headers = '', $atta
 
     try {
         // Fetch options from the database
-        $options = get_option('mirai_mailer_settings');
+        $options = get_option('qmfw_mirai_mailer_settings');
 
         // Configure SMTP settings (dynamic)
         $mail->isSMTP();
@@ -595,7 +583,7 @@ function send_email_via_gmail_smtp($to, $subject, $message, $headers = '', $atta
 
 
 //====== Get and Update Order Notes Via AJAX ======
-function handle_get_order_notes()
+function qmfw_handle_get_order_notes()
 {
     if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mirai_mailer_email_nonce')) {
         wp_send_json_error('Nonce is not valid.');
@@ -633,16 +621,16 @@ function handle_get_order_notes()
 
     wp_send_json_error('Invalid order ID');
 }
-add_action('wp_ajax_get_order_notes', 'handle_get_order_notes');
+add_action('wp_ajax_qmfw_handle_get_order_notes', 'qmfw_handle_get_order_notes');
 
 //====== END Get Order Notes Via AJAX ======
 
 
 // Check if using custom Mirai Mailer SMTP or default mailer
-function check_email_serv_is_set()
+function qmfw_check_email_serv_is_set()
 {
 
-    $options = get_option('mirai_mailer_settings');
+    $options = get_option('qmfw_mirai_mailer_settings');
     // Check if mirai_mailer_send_email_using is set in $options
     if (isset($options['mirai_mailer_send_email_using'])) {
         $custom_or_default_mailer = $options['mirai_mailer_send_email_using'];

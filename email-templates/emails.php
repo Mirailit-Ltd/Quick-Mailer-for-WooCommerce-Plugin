@@ -5,10 +5,10 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class EmailTemplates
+class QMFWEmailTemplates
 {
     // Save Email template to Database
-    public function mirai_mailer_save_template($template_name, $description, $subject, $body)
+    public function qmfw_save_template($template_name, $description, $subject, $body)
     {
         $template_name = sanitize_text_field($template_name);
         $description = sanitize_text_field($description);
@@ -75,7 +75,7 @@ class EmailTemplates
     }
 
     // Get Email Template from Database
-    function mirai_mailer_get_all_templates()
+    function qmfw_get_all_templates()
     {
         global $wpdb;
         $table_name = $wpdb->prefix . 'mirai_email_templates';
@@ -105,7 +105,7 @@ class EmailTemplates
     }
 
     // Get Specific Email Template from table
-    function mirai_mailer_get_template_fields($template_id)
+    function qmfw_get_template_fields($template_id)
     {
         global $wpdb;
         $table_name = $wpdb->prefix . 'mirai_email_templates';
@@ -130,7 +130,7 @@ class EmailTemplates
     }
 
     // Calculate Remaining Weight
-    public function get_remaining_weight($order)
+    public function qmfw_get_remaining_weight($order)
     {
         if (!function_exists('dsd_get_order_weight_wb')) {
             return array(
@@ -188,7 +188,7 @@ class EmailTemplates
     }
 
     // Get customer all processing woocommerce order numbers
-    public function get_duplicate_order_numbers($order)
+    public function qmfw_get_duplicate_order_numbers($order)
     {
         $customer_id = $order->get_customer_id();
         // Get customer processing orders by woocommerce query
