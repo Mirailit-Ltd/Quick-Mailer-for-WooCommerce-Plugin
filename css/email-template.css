@@ -27,18 +27,6 @@
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
-.button-primary {
-  background-color: #0073aa;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-}
-
-.button-primary:hover {
-  background-color: #005077;
-}
-
 .custom-meta-row {
   display: flex;
   align-items: center;
@@ -276,7 +264,9 @@
   font-size: 9px;
 }
 
-p {
+.order-summary-plugin p,
+.placeholder-card p,
+.mailer-status {
   margin: 0em 0;
 }
 

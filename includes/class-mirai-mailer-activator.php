@@ -1,6 +1,6 @@
 <?php
 
-// Exit if accessed directly
+// Exit if accessed directly.
 if (!defined('ABSPATH')) {
 	exit;
 }
@@ -29,9 +29,8 @@ class QMFW_Mailer_Activator
 {
 
 	/**
-	 * Short Description. (use period)
-	 *
-	 * Long Description.
+	 * Create or update the email templates table. dbDelta() is idempotent, so this is safe to
+	 * run on every activation and will apply schema changes in future versions.
 	 *
 	 * @since    1.0.0
 	 */
@@ -40,26 +39,20 @@ class QMFW_Mailer_Activator
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'mirai_email_templates';
 
-		// Check if the table already exists
-		if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") === $table_name) {
-			error_log("Table $table_name already exists");
-			return;
-		}
-
 		$charset_collate = $wpdb->get_charset_collate();
 
-		$sql = "CREATE TABLE $table_name (
+		// dbDelta() needs the raw statement; the table name is built from $wpdb->prefix.
+		$sql = "CREATE TABLE {$table_name} (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
 			template_name varchar(191) NOT NULL,
 			description text NOT NULL,
 			subject text NOT NULL,
 			body text NOT NULL,
 			PRIMARY KEY  (id),
-			UNIQUE (template_name)
-		) $charset_collate;";
+			UNIQUE KEY template_name (template_name)
+		) {$charset_collate};";
 
-		// Execute the SQL query directly
-		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta($sql);
 	}
 }

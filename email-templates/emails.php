@@ -1,185 +1,200 @@
 <?php
 
-// Exit if accessed directly
+// Exit if accessed directly.
 if (!defined('ABSPATH')) {
     exit;
 }
 
 class QMFWEmailTemplates
 {
-    // Save Email template to Database
+    const CACHE_GROUP = 'qmfw_mailer';
+    const ALL_TEMPLATES_CACHE_KEY = 'all_mirai_email_templates';
+
+    /**
+     * Name of the templates table.
+     *
+     * @return string
+     */
+    private function get_table_name()
+    {
+        global $wpdb;
+
+        return $wpdb->prefix . 'mirai_email_templates';
+    }
+
+    /**
+     * Save (insert or update) an email template.
+     */
     public function qmfw_save_template($template_name, $description, $subject, $body)
     {
         $template_name = sanitize_text_field($template_name);
         $description = sanitize_text_field($description);
         $subject = sanitize_text_field($subject);
-
         $body = wp_kses_post($body);
 
         global $wpdb;
-        $table_name = $wpdb->prefix . 'mirai_email_templates';
-        $cache_key = 'template_id_' . $template_name; // Unique cache key based on the template name
+        $table_name = $this->get_table_name();
+        $cache_key = 'template_id_' . md5($template_name);
 
-        // Attempt to get the template ID from the cache
-        $template_id = wp_cache_get($cache_key);
+        $template_id = wp_cache_get($cache_key, self::CACHE_GROUP);
 
-        // Check if the template ID exists in the cache
         if ($template_id === false) {
-            // If not found in cache, perform the database query to get the template ID
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-owned custom table, result cached below.
             $template_id = $wpdb->get_var(
                 $wpdb->prepare(
-                    "SELECT id FROM $table_name WHERE template_name = %s",
+                    'SELECT id FROM %i WHERE template_name = %s',
+                    $table_name,
                     $template_name
                 )
             );
-
-            // Cache the template ID (or null if not found), set an expiration for the cache (e.g., 86400 seconds for 24 hours)
-            wp_cache_set($cache_key, $template_id, '', 86400);
         }
 
         if ($template_id) {
-            // Update the existing template
-            $wpdb->update(
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-owned custom table.
+            $result = $wpdb->update(
                 $table_name,
                 array(
                     'description' => $description,
                     'subject' => $subject,
-                    'body' => $body
+                    'body' => $body,
                 ),
                 array('id' => $template_id),
-                array(
-                    '%s',
-                    '%s',
-                    '%s'
-                ),
+                array('%s', '%s', '%s'),
                 array('%d')
             );
         } else {
-            // Insert a new template
-            $wpdb->insert(
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-owned custom table.
+            $result = $wpdb->insert(
                 $table_name,
                 array(
                     'template_name' => $template_name,
                     'description' => $description,
                     'subject' => $subject,
-                    'body' => $body
+                    'body' => $body,
                 ),
-                array(
-                    '%s',
-                    '%s',
-                    '%s',
-                    '%s'
-                )
+                array('%s', '%s', '%s', '%s')
+            );
+            $template_id = $wpdb->insert_id;
+        }
+
+        // Drop the list cache in every case so a partial write can never leave stale data.
+        wp_cache_delete(self::ALL_TEMPLATES_CACHE_KEY, self::CACHE_GROUP);
+        wp_cache_delete('mirai_email_template_' . (int) $template_id, self::CACHE_GROUP);
+
+        if ($result === false || !$template_id) {
+            wp_cache_delete($cache_key, self::CACHE_GROUP);
+            throw new Exception(
+                $wpdb->last_error
+                    ? esc_html($wpdb->last_error)
+                    : esc_html__('The template could not be saved.', 'quick-mailer-for-woocommerce')
             );
         }
+
+        wp_cache_set($cache_key, $template_id, self::CACHE_GROUP, DAY_IN_SECONDS);
     }
 
-    // Get Email Template from Database
-    function qmfw_get_all_templates()
+    /**
+     * All templates keyed by template name.
+     *
+     * @return array
+     */
+    public function qmfw_get_all_templates()
     {
         global $wpdb;
-        $table_name = $wpdb->prefix . 'mirai_email_templates';
-        $cache_key = 'all_mirai_email_templates'; // Unique cache key for all templates
+        $table_name = $this->get_table_name();
 
-        // Attempt to get the templates from the cache
-        $templates = wp_cache_get($cache_key);
+        $templates = wp_cache_get(self::ALL_TEMPLATES_CACHE_KEY, self::CACHE_GROUP);
 
-        // Check if the templates exist in the cache
         if ($templates === false) {
-            // If not found in cache, perform the database query to get all templates
-            $templates = $wpdb->get_results("SELECT * FROM {$table_name}", OBJECT);
-
-            // Cache the templates, set an expiration for the cache (e.g., 86400 seconds for 24 hours)
-            wp_cache_set($cache_key, $templates, '', 86400);
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-owned custom table, result cached below.
+            $templates = $wpdb->get_results(
+                $wpdb->prepare('SELECT * FROM %i', $table_name),
+                OBJECT
+            );
+            if (!is_array($templates)) {
+                $templates = array();
+            }
+            wp_cache_set(self::ALL_TEMPLATES_CACHE_KEY, $templates, self::CACHE_GROUP, DAY_IN_SECONDS);
         }
 
-        // Prepare the array
+        // Values were unslashed before being stored, so they are returned as-is.
         $preformatted_emails = array();
         foreach ($templates as $template) {
             $preformatted_emails[$template->template_name] = array(
-                'subject' => stripslashes_deep($template->subject),
-                'body' => stripslashes_deep($template->body)
+                'subject' => $template->subject,
+                'body' => $template->body,
             );
         }
+
         return $preformatted_emails;
     }
 
-    // Get Specific Email Template from table
-    function qmfw_get_template_fields($template_id)
+    /**
+     * One template by id.
+     *
+     * @param int $template_id Template id.
+     * @return object|null
+     */
+    public function qmfw_get_template_fields($template_id)
     {
         global $wpdb;
-        $table_name = $wpdb->prefix . 'mirai_email_templates';
-        $cache_key = 'mirai_email_template_' . $template_id; // Unique cache key for the template
+        $table_name = $this->get_table_name();
+        $cache_key = 'mirai_email_template_' . absint($template_id);
 
-        // Attempt to get the specific template from the cache
-        $template = wp_cache_get($cache_key);
+        $template = wp_cache_get($cache_key, self::CACHE_GROUP);
 
-        // Check if the template exists in the cache
         if ($template === false) {
-            // Directly passing the prepared statement to $wpdb->get_row()
-            $template = $wpdb->get_row($wpdb->prepare(
-                "SELECT template_name, description, subject, body FROM {$table_name} WHERE id = %d",
-                $template_id
-            ));
-
-            // Cache the template, set an expiration for the cache (e.g., 86400 seconds for 24 hours)
-            wp_cache_set($cache_key, $template, '', 86400);
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-owned custom table, result cached below.
+            $template = $wpdb->get_row(
+                $wpdb->prepare(
+                    'SELECT template_name, description, subject, body FROM %i WHERE id = %d',
+                    $table_name,
+                    $template_id
+                )
+            );
+            wp_cache_set($cache_key, $template, self::CACHE_GROUP, DAY_IN_SECONDS);
         }
 
         return $template;
     }
 
-    // Calculate Remaining Weight
+    /**
+     * Item weight and remaining box capacity for an order.
+     *
+     * Relies on an optional third-party filter `qmfw_get_order_weight_wb` that receives the
+     * order and returns an object with `items_weight` and `total_box_count`. Returns zeros when
+     * nothing is hooked.
+     *
+     * @param WC_Order $order Order.
+     * @return array
+     */
     public function qmfw_get_remaining_weight($order)
     {
-        if (!function_exists('qmfw_get_order_weight_wb')) {
-            return array(
-                'remaining_weight' => 0,
-                'items_weight' => 0,
-            );
+        $empty = array(
+            'remaining_weight' => 0,
+            'items_weight' => 0,
+        );
+
+        if (!has_filter('qmfw_get_order_weight_wb')) {
+            return $empty;
         }
 
-        // Get order weight infos
         $shipping_weight_result = apply_filters('qmfw_get_order_weight_wb', $order);
-        $items_weight = $shipping_weight_result->items_weight;
-        $dry_weight = $shipping_weight_result->dry_weight;
-        $chilled_weight = $shipping_weight_result->chilled_weight;
-        $dry_box_count = $shipping_weight_result->dry_box_count;
-        $chilled_box_count = $shipping_weight_result->chilled_box_count;
-        $mixed_box_count = $shipping_weight_result->mixed_box_count;
-        $total_box_count = $shipping_weight_result->total_box_count;
-
-        // Get Tracking Info
-        $order_id = $order->get_id();
-        $tracking_items = get_post_meta($order_id, '_wc_shipment_tracking_items', true);
-
-        // Order Total Info 
-        $total_amount = $order->get_total();
-
-        try {
-            //  Check Shipping Method Title
-            foreach ($order->get_items('shipping') as $item_id => $item) {
-                // Get the data in an unprotected array
-                $item_data = $item->get_data();
-                $shipping_method_title = $item_data['method_title'];
-            }
-
-
-            if (strpos($shipping_method_title, 'Chilled') !== false) {
-                //  Total allocateable weight 
-                $boxCapacity = 24;
-                $total_allocateable_weight = $boxCapacity * $total_box_count;
-                $remaining_weight = $total_allocateable_weight - $items_weight;
-            } else {
-                //  Total allocateable weight 
-                $boxCapacity = 25;
-                $total_allocateable_weight = $boxCapacity * $total_box_count;
-                $remaining_weight = $total_allocateable_weight - $items_weight;
-            }
-        } catch (Exception $e) {
-            $remaining_weight = 0;
+        if (!is_object($shipping_weight_result) || !isset($shipping_weight_result->items_weight, $shipping_weight_result->total_box_count)) {
+            return $empty;
         }
 
+        $items_weight = (float) $shipping_weight_result->items_weight;
+        $total_box_count = (int) $shipping_weight_result->total_box_count;
+
+        $shipping_method_title = '';
+        foreach ($order->get_items('shipping') as $item) {
+            $shipping_method_title = $item->get_method_title();
+        }
+
+        // Chilled boxes carry 24 kg, other boxes 25 kg.
+        $box_capacity = (strpos($shipping_method_title, 'Chilled') !== false) ? 24 : 25;
+        $remaining_weight = ($box_capacity * $total_box_count) - $items_weight;
 
         return array(
             'remaining_weight' => $remaining_weight,
@@ -187,21 +202,33 @@ class QMFWEmailTemplates
         );
     }
 
-    // Get customer all processing woocommerce order numbers
+    /**
+     * Order numbers of the customer's other processing orders (the current order is excluded).
+     *
+     * @param WC_Order $order Order.
+     * @return array
+     */
     public function qmfw_get_duplicate_order_numbers($order)
     {
         $customer_id = $order->get_customer_id();
-        // Get customer processing orders by woocommerce query
+        if (!$customer_id) {
+            return array();
+        }
+
         $customer_orders = wc_get_orders(
             array(
                 'customer_id' => $customer_id,
                 'status' => array('processing'),
+                'limit' => -1,
             )
         );
 
-        // Get all order numbers as a array
+        $current_id = $order->get_id();
         $order_numbers = array();
         foreach ($customer_orders as $customer_order) {
+            if ($customer_order->get_id() === $current_id) {
+                continue;
+            }
             $order_numbers[] = $customer_order->get_order_number();
         }
 

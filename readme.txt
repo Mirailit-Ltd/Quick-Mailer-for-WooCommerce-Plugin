@@ -1,13 +1,13 @@
 === Quick Mailer for WooCommerce ===
 Contributors: mirailit
-Donate link: https://aimailer.mirailit.com/
+Donate link: https://mirailit.com/
 Tags: woocommerce, email, communication, orders, customer-support
-Requires at least: 5.0
-Requires PHP: 7.0
-Tested up to: 6.4
-Stable tag: 1.0.2
+Requires at least: 6.2
+Requires PHP: 7.4
+Tested up to: 7.1
+Stable tag: 1.0.3
 License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Quick, Easy Emails to Customers right from Woocommerce Dashboard.
 
@@ -45,8 +45,8 @@ The Quick Mailer for WooCommerce Plugin is a powerful and user-friendly tool des
    - Utilize placeholders and custom meta fields to personalize your messages.
 
 3. **Sending Emails:**
-   - Go to the WooCommerce Orders Dashboard.
-   - Select an order and choose the 'Send Email' action.
+   - Go to WooCommerce > Orders and open an order.
+   - Scroll to the 'Quick Mailer for WooCommerce' box on the order edit screen.
    - Pick a predefined template or write a custom message, and send it directly to the customer.
 
 == Usage Tips ==
@@ -67,7 +67,7 @@ This plugin streamlines communication by allowing you to send important updates 
 
 = Can I customize the emails sent through Quick Mailer for WooCommerce? =
 
-Yes, absolutely! Quick Mailer for WooCommerce provides customization options, allowing you to tailor your emails to suit your brand and communication style. You can personalize the content, subject lines, and even choose specific orders or customer groups to target.
+Yes, absolutely! Quick Mailer for WooCommerce lets you write any subject and body, save them as reusable templates, and personalize them with placeholders such as the customer name, order number and delivery date, which are filled in automatically for the order you are viewing.
 
 = Is Quick Mailer for WooCommerce easy to use? =
 
@@ -79,6 +79,23 @@ Yes, one of the key features of Quick Mailer for WooCommerce is its user-friendl
 2. Setting Page View
 
 == Changelog ==
+
+= v1.0.3 =
+
+* Security - Added capability checks to all AJAX handlers in addition to the existing nonce checks.
+* Security - Added a sanitize callback for the settings option so every SMTP field is validated before saving.
+* Security - All database queries now use prepared statements, including table identifiers.
+* Fix - SMTP send failures are now reported instead of silently returning success.
+* Fix - Saved templates now appear immediately after saving on sites with a persistent object cache.
+* Fix - Declared compatibility with WooCommerce High-Performance Order Storage (HPOS) and read order meta via the order object.
+* Fix - Admin scripts and styles are only loaded on the order edit screen and the plugin settings page.
+* Fix - Inline scripts moved into the enqueued admin script file.
+* Fix - Plugin no longer errors when WooCommerce is inactive; an admin notice is shown instead.
+* Enhancement - Added an uninstall routine that removes the settings and templates table.
+* Fix - SMTP port 465 now uses implicit TLS instead of STARTTLS, so providers that require SMTPS work.
+* Fix - A failed template save now reports the error instead of a false success message.
+* Fix - The duplicate order numbers placeholder no longer includes the order being viewed.
+* Update - Tested with WordPress 7.1 and WooCommerce 11.1. Minimum WordPress raised to 6.2 and minimum PHP to 7.4.
 
 = v1.0.2 =
 
@@ -110,12 +127,6 @@ Original version of the Quick Mailer for Woocommerce, not a released version of 
 
 
 == Upgrade Notice ==
-Thank you for choosing Quick Mailer for WooCommerce! In this initial release, we're excited to introduce a powerful tool to streamline communication between your online store and your customers. Here's what's new:
 
-Seamless integration with WooCommerce Orders Dashboard, allowing you to send updates and information directly from your WooCommerce order details page.
-Save email template based on your need..
-Email delivery status tracking, so you can ensure your messages reach their intended recipients.
-We're committed to continually improving Quick Mailer for WooCommerce to meet your needs. If you have any feedback or suggestions, please don't hesitate to reach out to us.
-
-Upgrade now to fully realize the power of Quick Mailer for WooCommerce, as AI Mailer for WooCommerce generates emails using AI based on your context.
-<a href="https://aimailer.mirailit.com/" target="_blank"> Visit Here</a>
+= 1.0.3 =
+Security and compatibility release. Adds capability checks, settings sanitization, prepared SQL, HPOS compatibility and WordPress 7.1 support. Update recommended for all users.
