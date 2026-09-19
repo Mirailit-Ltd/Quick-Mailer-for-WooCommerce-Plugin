@@ -3,7 +3,7 @@
  * Plugin Name: Quick Mailer for WooCommerce
  * Plugin URI: https://mirailit.com/
  * Description: Quick, Easy Emails to Customers right from WooCommerce Dashboard. This Plugin is a powerful and user-friendly tool designed to streamline the communication process between your online store's support team or shop managers and your customers.
- * Version: 1.0.3
+ * Version: 1.0.4
  * Author: Mirailit Limited
  * Author URI: https://mirailit.com/
  * License: GPLv2 or later
@@ -35,7 +35,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Plugin version, url and paths.
-define('QMFW_MAILER_VERSION', '1.0.3');
+define('QMFW_MAILER_VERSION', '1.0.4');
 define('QMFW_MAILER_PATH', plugin_dir_path(__FILE__));
 define('QMFW_MAILER_URL', plugin_dir_url(__FILE__));
 define('QMFW_MAILER_BASENAME', plugin_basename(__FILE__));
@@ -136,7 +136,7 @@ function qmfw_is_order_edit_screen()
  */
 function qmfw_email_add_scripts($hook)
 {
-    $is_settings_page = ('toplevel_page_quick-mailer-settings' === $hook);
+    $is_settings_page = (QMFW_SETTINGS_HOOK === $hook);
 
     if (!$is_settings_page && !qmfw_is_order_edit_screen()) {
         return;

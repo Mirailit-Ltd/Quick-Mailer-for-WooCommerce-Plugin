@@ -5,7 +5,7 @@ Tags: woocommerce, email, communication, orders, customer-support
 Requires at least: 6.2
 Requires PHP: 7.4
 Tested up to: 7.1
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,8 +37,8 @@ The Quick Mailer for WooCommerce Plugin is a powerful and user-friendly tool des
 == Configuration ==
 
 1. **Set Up Email Provider:**
-   - Set up the email provider information from the plugins setting page.
-   - You will acccess the page 'Quick Mailer' from the left sidebar of the admin panel.
+   - Set up the email provider information from the plugin settings page.
+   - You will find the page under WooCommerce > Quick Mailer in the admin panel.
 
 2. **Create and Manage Templates:**
    - Access the templates files. Section to create or modify your email templates.
@@ -79,6 +79,10 @@ Yes, one of the key features of Quick Mailer for WooCommerce is its user-friendl
 2. Setting Page View
 
 == Changelog ==
+
+= v1.0.4 =
+
+* Change - The settings page now lives under the WooCommerce menu (WooCommerce > Quick Mailer) instead of a top-level menu item.
 
 = v1.0.3 =
 
@@ -127,6 +131,9 @@ Original version of the Quick Mailer for Woocommerce, not a released version of 
 
 
 == Upgrade Notice ==
+
+= 1.0.4 =
+The settings page moved to WooCommerce > Quick Mailer.
 
 = 1.0.3 =
 Security and compatibility release. Adds capability checks, settings sanitization, prepared SQL, HPOS compatibility and WordPress 7.1 support. Update recommended for all users.

@@ -5,19 +5,24 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+/**
+ * Hook suffix of the settings screen: "woocommerce_page_quick-mailer-settings".
+ * Registered as a submenu of WooCommerce, where WooCommerce extensions belong.
+ */
+define('QMFW_SETTINGS_HOOK', 'woocommerce_page_quick-mailer-settings');
+
 function qmfw_create_settings_menu()
 {
-    add_menu_page(
+    add_submenu_page(
+        'woocommerce',
         __('Quick Mailer Settings', 'quick-mailer-for-woocommerce'),
         __('Quick Mailer', 'quick-mailer-for-woocommerce'),
         'manage_options',
         'quick-mailer-settings',
-        'qmfw_mirai_mailer_settings_page_content',
-        'dashicons-email-alt',
-        6
+        'qmfw_mirai_mailer_settings_page_content'
     );
 }
-add_action('admin_menu', 'qmfw_create_settings_menu');
+add_action('admin_menu', 'qmfw_create_settings_menu', 60);
 
 function qmfw_mirai_mailer_settings_page_content()
 {
